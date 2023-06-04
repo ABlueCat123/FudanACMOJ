@@ -135,6 +135,7 @@ Comment: 评论
 Comments: 评论
 CommonMark Syntax: CommonMark 语法
 Compile Error: 编译错误
+Compile Success: 编译成功 #ADD_23.6.4: Compile Success
 Compilers' Version and Parameters: 编译器版本及参数
 Complete: 完成
 Completed: 已完成

@@ -57,6 +57,3 @@ __*
 !__mocks__
 !.gitkeep
 *.local
-
-# Monokle
-.monokle

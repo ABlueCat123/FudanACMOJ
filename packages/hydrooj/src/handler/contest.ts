@@ -423,11 +423,13 @@ export class ContestEditHandler extends Handler {
     @param('contestDuration', Types.Float, true)
     @param('maintainer', Types.NumericArray, true)
     @param('allowViewCode', Types.Boolean)
+    @param('compileOnly', Types.Boolean) //ADD_23.6.4: Compile Result
     async postUpdate(
         domainId: string, tid: ObjectId, beginAtDate: string, beginAtTime: string, duration: number,
         title: string, content: string, rule: string, _pids: string, rated = false,
         _code = '', autoHide = false, assign: string[] = [], lock: number = null,
         contestDuration: number = null, maintainer: number[] = [], allowViewCode = false,
+        compileOnly = false,
     ) {
         if (autoHide) this.checkPerm(PERM.PERM_EDIT_PROBLEM);
         const pids = _pids.replace(/，/g, ',').split(',').map((i) => +i).filter((i) => i);
@@ -468,7 +470,7 @@ export class ContestEditHandler extends Handler {
             });
         }
         await contest.edit(domainId, tid, {
-            assign, _code, autoHide, lockAt, maintainer, allowViewCode,
+            assign, _code, autoHide, lockAt, maintainer, allowViewCode, compileOnly,
         });
         this.response.body = { tid };
         this.response.redirect = this.url('contest_detail', { tid });

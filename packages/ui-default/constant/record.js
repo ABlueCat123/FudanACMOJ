@@ -14,6 +14,7 @@ export const STATUS_JUDGING = 20;
 export const STATUS_COMPILING = 21;
 export const STATUS_FETCHED = 22;
 export const STATUS_IGNORED = 30;
+export const STATUS_COMPILE_SUCCESS = 40; //ADD_23.6.4: Compile Success
 
 export const STATUS_TEXTS = {
   [STATUS_WAITING]: 'Waiting',
@@ -31,6 +32,7 @@ export const STATUS_TEXTS = {
   [STATUS_COMPILING]: 'Compiling',
   [STATUS_FETCHED]: 'Fetched',
   [STATUS_IGNORED]: 'Ignored',
+  [STATUS_COMPILE_SUCCESS]: 'Compile Success', //ADD_23.6.4: Compile Success
 };
 
 export const STATUS_CODES = {
@@ -49,6 +51,7 @@ export const STATUS_CODES = {
   [STATUS_COMPILING]: 'progress',
   [STATUS_FETCHED]: 'progress',
   [STATUS_IGNORED]: 'ignored',
+  [STATUS_COMPILE_SUCCESS]: 'pending', //ADD_23.6.4: Compile Success
 };
 
 /**
@@ -69,6 +72,7 @@ export const STATUS_SCRATCHPAD_SHOW_DETAIL_FLAGS = {
   [STATUS_COMPILING]: false,
   [STATUS_FETCHED]: false,
   [STATUS_IGNORED]: false,
+  [STATUS_COMPILE_SUCCESS]: false, //ADD_23.6.4: Compile Success
 };
 
 /**

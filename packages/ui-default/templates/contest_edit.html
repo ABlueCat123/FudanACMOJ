@@ -158,6 +158,16 @@
               value:tdoc.allowViewCode|default(true),
               row:false
             }) }}
+            <!-- ADD_23.6.4: Compile Result -->
+            {{ form.form_checkbox({
+              columns:3,
+              label:'Compile Only',
+              name:'compileOnly',
+              placeholder:_('Only show compiling result in the contest'),
+              value:tdoc.compileOnly|default(false),
+              row:false
+            }) }}
+            <!-- ADD_23.6.4: Compile Result -->
             <div style="display: none" class="contest-rule-settings contest-rule--acm contest-rule--ioi contest-rule--strictioi">
             {{ form.form_text({
               columns:4,
