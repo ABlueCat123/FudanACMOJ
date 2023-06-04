@@ -2,13 +2,23 @@
 <td class="col--status record-status--border {{ class }} {{ model.builtin.STATUS_CODES[rdoc.status] }}">
   <div class="col--status__text">
     <span class="icon record-status--icon {{ model.builtin.STATUS_CODES[rdoc.status] }}"></span>
-    <a 
-      href="{{ url('record_detail', rid=rdoc[rid_key], domainId=rdoc.domainId) if allDomain else url('record_detail', rid=rdoc[rid_key]) }}"
-      class="record-status--text {{ model.builtin.STATUS_CODES[rdoc.status] }}"
+    {% if rdoc.status == STATUS.STATUS_COMPILE_SUCCESS %}
+<!--      {{ model.builtin.STATUS_SHORT_TEXTS[rdoc.status] if short else model.builtin.STATUS_TEXTS[rdoc.status] }}-->
+    <a
+            href="{{ url('record_detail', rid=rdoc[rid_key], domainId=rdoc.domainId) if allDomain else url('record_detail', rid=rdoc[rid_key]) }}"
+            class="record-status--text {{ model.builtin.STATUS_CODES[rdoc.status] }}"
     >
-      <span style="color: {{ utils.status.getScoreColor(rdoc.score|default(0)) }}">{{ rdoc.score|default(0) }}</span>
-      {{ model.builtin.STATUS_SHORT_TEXTS[rdoc.status] if short else model.builtin.STATUS_TEXTS[rdoc.status] }}
+    编译通过
     </a>
+    {% else %}
+      <a
+            href="{{ url('record_detail', rid=rdoc[rid_key], domainId=rdoc.domainId) if allDomain else url('record_detail', rid=rdoc[rid_key]) }}"
+            class="record-status--text {{ model.builtin.STATUS_CODES[rdoc.status] }}"
+      >
+        <span style="color: {{ utils.status.getScoreColor(rdoc.score|default(0)) }}">{{ rdoc.score|default(0) }}</span>
+        {{ model.builtin.STATUS_SHORT_TEXTS[rdoc.status] if short else model.builtin.STATUS_TEXTS[rdoc.status] }}
+      </a>
+    {% endif %}
   </div>
   {% if rdoc.status == STATUS.STATUS_JUDGING %}
     <div class="col--status__progress-container">
@@ -17,3 +27,5 @@
   {% endif %}
 </td>
 {% endmacro %}
+
+<!--ABlueCat 2023/06/04 add the CPS status.-->

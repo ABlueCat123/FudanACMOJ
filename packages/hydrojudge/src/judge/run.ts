@@ -44,7 +44,9 @@ export const judge = async (ctx: Context) => {
         }
         return;
     }
-
+    console.log("1111111111111111111111111")
+    console.log(ctx.onlyCompile)
+    console.log("1111111111111111111111111")
     if (ctx.onlyCompile) { //ADD_23.6.4: Compile Result
         ctx.end({
             status: STATUS.STATUS_COMPILE_SUCCESS,

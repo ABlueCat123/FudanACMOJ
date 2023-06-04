@@ -1,3 +1,5 @@
+//ABlueCat & Yosame 2023/06/04: add CPS status.
+
 export enum STATUS {
     STATUS_WAITING = 0,
     STATUS_ACCEPTED = 1,
@@ -57,6 +59,7 @@ export const STATUS_SHORT_TEXTS: Partial<Record<STATUS, string>> = {
     [STATUS.STATUS_HACKED]: 'HK',
     [STATUS.STATUS_IGNORED]: 'IGN',
     [STATUS.STATUS_FORMAT_ERROR]: 'FE',
+    [STATUS.STATUS_COMPILE_SUCCESS]: 'CPS'
 };
 
 export const STATUS_CODES: Record<STATUS, string> = {

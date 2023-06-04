@@ -48,6 +48,7 @@ function buildContestRule<T>(def: Partial<ContestRule<T>>, baseRule: ContestRule
 
 const acm = buildContestRule({
     TEXT: 'ACM/ICPC',
+    showCompileResult: (tdoc, now) => tdoc.compileOnly, // ABlueCat: 2023/06/04 add compile result
     check: () => { },
     statusSort: { accept: -1, time: 1 },
     submitAfterAccept: false,
@@ -215,11 +216,12 @@ const acm = buildContestRule({
     },
     async ranked(tdoc, cursor) {
         return await ranked(cursor, (a, b) => a.accept === b.accept && a.time === b.time);
-    },
+    }
 });
 
 const oi = buildContestRule({
     TEXT: 'OI',
+    showCompileResult: (tdoc, now) => tdoc.compileOnly, // ABlueCat: 2023/06/04 add compile result
     check: () => { },
     submitAfterAccept: true,
     statusSort: { score: -1 },
@@ -503,6 +505,7 @@ const ledo = buildContestRule({
 }, oi);
 
 const homework = buildContestRule({
+    showCompileResult: (tdoc, now) => tdoc.compileOnly,
     TEXT: 'Assignment',
     hidden: true,
     check: () => { },
@@ -867,6 +870,12 @@ export function canShowScoreboard(this: { user: User }, tdoc: Tdoc<30>, allowPer
     return false;
 }
 
+export function canShowCompileResult(this: { user: User }, tdoc: Tdoc<30>, allowPermOverride = true) {
+    if (RULES[tdoc.rule].showCompileResult(tdoc, new Date())) return true;
+    if (allowPermOverride && canViewHiddenScoreboard.call(this, tdoc)) return true;
+    return false;
+}
+
 export async function getScoreboard(
     this: Handler, domainId: string, tid: ObjectId, config: ScoreboardConfig,
 ): Promise<[Tdoc<30>, ScoreboardRow[], BaseUserDict, ProblemDict]> {
@@ -912,6 +921,7 @@ global.Hydro.model.contest = {
     unlockScoreboard,
     canShowRecord,
     canShowSelfRecord,
+    canShowCompileResult,
     canShowScoreboard,
     canViewHiddenScoreboard,
     getScoreboard,

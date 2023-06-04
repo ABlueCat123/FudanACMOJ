@@ -46,6 +46,7 @@ export class JudgeTask {
     constructor(public session: Session, public request: JudgeRequest) {
         this.stat = {};
         this.stat.receive = new Date();
+        this.onlyCompile = true;
         logger.debug('%o', request);
     }
 

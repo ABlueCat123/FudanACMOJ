@@ -527,6 +527,7 @@ export interface ContestRule<T = any> {
     showScoreboard: (tdoc: Tdoc<30>, now: Date) => boolean;
     showSelfRecord: (tdoc: Tdoc<30>, now: Date) => boolean;
     showRecord: (tdoc: Tdoc<30>, now: Date) => boolean;
+    showCompileResult: (tdoc: Tdoc<30>, now: Date) => boolean;     // ABlueCat: 2023/06/04 add compile result
     stat: (this: ContestRule<T>, tdoc: Tdoc<30>, journal: any[]) => ContestStat & T;
     scoreboardHeader: (
         this: ContestRule<T>, config: ScoreboardConfig, _: (s: string) => string,

@@ -271,7 +271,21 @@ export class ContestProblemListHandler extends ContestDetailBaseHandler {
             ]);
             this.response.body.canViewRecord = true;
         } else {
-            for (const i of psdocs) this.response.body.rdict[i.rid] = { _id: i.rid };
+            if (contest.canShowCompileResult.call(this, this.tdoc))
+            {
+                [this.response.body.rdict, this.response.body.rdocs] = await Promise.all([
+                    record.getList(domainId, psdocs.map((i: any) => i.rid)),
+                    await record.getMulti(domainId, { contest: tid, uid: this.user._id })
+                        .sort({ _id: -1 }).toArray(),
+                ]);
+                this.response.body.canViewRecord = true;
+            }
+            else
+            {
+                for (const i of psdocs) {
+                    this.response.body.rdict[i.rid] = { _id: i.rid };
+                }
+            }
         }
     }
 }
