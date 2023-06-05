@@ -8,7 +8,7 @@
             href="{{ url('record_detail', rid=rdoc[rid_key], domainId=rdoc.domainId) if allDomain else url('record_detail', rid=rdoc[rid_key]) }}"
             class="record-status--text {{ model.builtin.STATUS_CODES[rdoc.status] }}"
     >
-    编译通过
+    编译成功
     </a>
     {% else %}
       <a

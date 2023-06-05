@@ -44,87 +44,78 @@ export const judge = async (ctx: Context) => {
         }
         return;
     }
-    console.log("1111111111111111111111111")
-    console.log(ctx.onlyCompile)
-    console.log("1111111111111111111111111")
-    if (ctx.onlyCompile) { //ADD_23.6.4: Compile Result
-        ctx.end({
-            status: STATUS.STATUS_COMPILE_SUCCESS,
-        });
-    } else { //original code
-        ctx.clean.push(ctx.execute.clean);
-        ctx.next({ status: STATUS.STATUS_JUDGING, progress: 0 });
-        const res = await runQueued(
-            ctx.execute.execute,
-            {
-                stdin: { content: ctx.input },
-                copyIn: ctx.execute.copyIn,
-                // Allow 2x limits for better debugging
-                time: parseTimeMS(ctx.config.time || '1s') * 2,
-                memory: parseMemoryMB(ctx.config.memory || '128m'),
-            },
-            1,
-        );
-        const { code, time, memory } = res;
-        let { status } = res;
-        const message: string[] = [];
-        if (time > parseTimeMS(ctx.config.time || '1s')) {
-            status = STATUS.STATUS_TIME_LIMIT_EXCEEDED;
-        } else if (memory > parseMemoryMB(ctx.config.memory || '128m') * 1024) {
-            status = STATUS.STATUS_MEMORY_LIMIT_EXCEEDED;
-        } else if (code) {
-            status = STATUS.STATUS_RUNTIME_ERROR;
-            if (code < 32) message.push(`ExitCode: ${code} (${signals[code]})`);
-            else message.push(`ExitCode: ${code}`);
-        }
-        message.push(res.stdout, res.stderr);
-        ctx.next({
+    ctx.clean.push(ctx.execute.clean);
+    ctx.next({ status: STATUS.STATUS_JUDGING, progress: 0 });
+    const res = await runQueued(
+        ctx.execute.execute,
+        {
+            stdin: { content: ctx.input },
+            copyIn: ctx.execute.copyIn,
+            // Allow 2x limits for better debugging
+            time: parseTimeMS(ctx.config.time || '1s') * 2,
+            memory: parseMemoryMB(ctx.config.memory || '128m'),
+        },
+        1,
+    );
+    const { code, time, memory } = res;
+    let { status } = res;
+    const message: string[] = [];
+    if (time > parseTimeMS(ctx.config.time || '1s')) {
+        status = STATUS.STATUS_TIME_LIMIT_EXCEEDED;
+    } else if (memory > parseMemoryMB(ctx.config.memory || '128m') * 1024) {
+        status = STATUS.STATUS_MEMORY_LIMIT_EXCEEDED;
+    } else if (code) {
+        status = STATUS.STATUS_RUNTIME_ERROR;
+        if (code < 32) message.push(`ExitCode: ${code} (${signals[code]})`);
+        else message.push(`ExitCode: ${code}`);
+    }
+    message.push(res.stdout, res.stderr);
+    ctx.next({
+        status,
+        case: {
+            subtaskId: 0,
             status,
-            case: {
-                subtaskId: 0,
-                status,
-                score: 100,
-                time,
-                memory,
-                message: message.join('\n').substring(0, 102400),
-            },
-        });
-        if ([STATUS.STATUS_WRONG_ANSWER, STATUS.STATUS_RUNTIME_ERROR].includes(status)) {
-            const langConfig = ctx.session.getLang(ctx.lang);
-            if (langConfig.analysis) {
-                try {
-                    ctx.analysis = true;
-                    const r = await runQueued(langConfig.analysis, {
-                        copyIn: {
-                            ...ctx.execute.copyIn,
-                            input: { content: ctx.input },
-                            [langConfig.code_file || 'foo']: ctx.code,
-                            compile: { content: langConfig.compile || '' },
-                            execute: { content: langConfig.execute || '' },
-                        },
-                        env: {
-                            ...ctx.env,
-                            HYDRO_PRETEST: 'true',
-                        },
-                        time: 5000,
-                        memory: 256,
-                    });
-                    const out = r.stdout.toString();
-                    if (out.length) ctx.next({ compilerText: out.substring(0, 1024) });
-                    if (process.env.DEV) console.log(r);
-                } catch (e) {
-                    logger.info('Failed to run analysis');
-                    logger.error(e);
-                }
+            score: 100,
+            time,
+            memory,
+            message: message.join('\n').substring(0, 102400),
+        },
+    });
+    if ([STATUS.STATUS_WRONG_ANSWER, STATUS.STATUS_RUNTIME_ERROR].includes(status)) {
+        const langConfig = ctx.session.getLang(ctx.lang);
+        if (langConfig.analysis) {
+            try {
+                ctx.analysis = true;
+                const r = await runQueued(langConfig.analysis, {
+                    copyIn: {
+                        ...ctx.execute.copyIn,
+                        input: { content: ctx.input },
+                        [langConfig.code_file || 'foo']: ctx.code,
+                        compile: { content: langConfig.compile || '' },
+                        execute: { content: langConfig.execute || '' },
+                    },
+                    env: {
+                        ...ctx.env,
+                        HYDRO_PRETEST: 'true',
+                    },
+                    time: 5000,
+                    memory: 256,
+                });
+                const out = r.stdout.toString();
+                if (out.length) ctx.next({ compilerText: out.substring(0, 1024) });
+                if (process.env.DEV) console.log(r);
+            } catch (e) {
+                logger.info('Failed to run analysis');
+                logger.error(e);
             }
         }
-        ctx.stat.done = new Date();
-        if (process.env.DEV) ctx.next({ message: JSON.stringify(ctx.stat) });
-        ctx.end({
-            status,
-            score: status === STATUS.STATUS_ACCEPTED ? 100 : 0,
-            time: Math.floor(time * 1000000) / 1000000,
-            memory,
-        });
     }
+    ctx.stat.done = new Date();
+    if (process.env.DEV) ctx.next({ message: JSON.stringify(ctx.stat) });
+    ctx.end({
+        status,
+        score: status === STATUS.STATUS_ACCEPTED ? 100 : 0,
+        time: Math.floor(time * 1000000) / 1000000,
+        memory,
+    });
 };

@@ -41,12 +41,10 @@ export class JudgeTask {
     end: (data: Partial<JudgeResultBody>) => void;
     env: Record<string, string>;
     callbackCache?: TestCase[];
-    onlyCompile?: boolean; //ADD_23.6.4: Compile Result
 
     constructor(public session: Session, public request: JudgeRequest) {
         this.stat = {};
         this.stat.receive = new Date();
-        this.onlyCompile = true;
         logger.debug('%o', request);
     }
 

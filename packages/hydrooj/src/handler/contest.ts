@@ -271,14 +271,27 @@ export class ContestProblemListHandler extends ContestDetailBaseHandler {
             ]);
             this.response.body.canViewRecord = true;
         } else {
-            if (contest.canShowCompileResult.call(this, this.tdoc))
+            if (contest.canShowCompileResult.call(this, this.tdoc)) //ABlueCat: Add contest - compile only
             {
                 [this.response.body.rdict, this.response.body.rdocs] = await Promise.all([
                     record.getList(domainId, psdocs.map((i: any) => i.rid)),
                     await record.getMulti(domainId, { contest: tid, uid: this.user._id })
                         .sort({ _id: -1 }).toArray(),
                 ]);
-                this.response.body.canViewRecord = true;
+                console.log(this.response.body.rdict);
+                console.log(this.response.body.rdict[0]);
+                for (const key in this.response.body.rdict)
+                {
+                    if (this.response.body.rdict[key].status == STATUS.STATUS_COMPILE_ERROR || this.response.body.rdict[key].status == STATUS.STATUS_SYSTEM_ERROR)
+                    {
+
+                    }
+                    else
+                    {
+                        this.response.body.rdict[key].status = STATUS.STATUS_COMPILE_SUCCESS;
+                    }
+                }
+                this.response.body.canViewRecord = false;
             }
             else
             {
