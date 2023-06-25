@@ -282,6 +282,10 @@ export class ContestProblemListHandler extends ContestDetailBaseHandler {
                 console.log(this.response.body.rdict[0]);
                 for (const key in this.response.body.rdict)
                 {
+                    if (this.response.body.rdict[key].status == STATUS.STATUS_WAITING || this.response.body.rdict[key].status == STATUS.STATUS_JUDGING || this.response.body.rdict[key].status == STATUS.STATUS_COMPILING || this.response.body.rdict[key].status == STATUS.STATUS_FETCHED)
+                    {
+                        continue;
+                    }
                     if (this.response.body.rdict[key].status == STATUS.STATUS_COMPILE_ERROR || this.response.body.rdict[key].status == STATUS.STATUS_SYSTEM_ERROR)
                     {
 
