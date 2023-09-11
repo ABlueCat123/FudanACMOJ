@@ -530,7 +530,7 @@ export async function apply(ctx) {
     ctx.Route('user_sudo', '/user/sudo', UserSudoHandler, PRIV.PRIV_USER_PROFILE);
     ctx.Route('user_webauthn', '/user/webauthn', UserWebauthnHandler);
     ctx.Route('user_oauth_callback', '/oauth/:type/callback', OauthCallbackHandler);
-    ctx.Route('user_register', '/register', UserRegisterHandler, PRIV.PRIV_REGISTER_USER);
+    // ctx.Route('user_register', '/register', UserRegisterHandler, PRIV.PRIV_REGISTER_USER);
     ctx.Route('user_register_with_code', '/register/:code', UserRegisterWithCodeHandler, PRIV.PRIV_REGISTER_USER);
     ctx.Route('user_logout', '/logout', UserLogoutHandler, PRIV.PRIV_USER_PROFILE);
     ctx.Route('user_lostpass', '/lostpass', UserLostPassHandler);

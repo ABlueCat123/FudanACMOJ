@@ -18,6 +18,7 @@ import domain from './domain';
 import * as setting from './setting';
 import * as system from './system';
 import token from './token';
+import {log} from "./oplog";
 
 export const coll: Collection<Udoc> = db.collection('user');
 // Virtual user, only for display in contest.

@@ -892,9 +892,7 @@ export async function getScoreboard(
 }
 
 export const statusText = (tdoc: Tdoc, tsdoc?: any) => (
-    isNew(tdoc)
-        ? 'New'
-        : isUpcoming(tdoc)
+    isUpcoming(tdoc)
             ? 'Ready (☆▽☆)'
             : isOngoing(tdoc, tsdoc)
                 ? 'Live...'

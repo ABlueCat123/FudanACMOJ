@@ -73,9 +73,9 @@ const saslprepString = <T = string>(regex?: RegExp, cb?: (i: string) => boolean,
     },
 ] as [(v) => string, (v) => boolean];
 
-export const Types: Types = {
-    Content: [(v) => v.toString().trim(), (v) => v?.toString()?.trim() && v.toString().trim().length < 65536],
-    Key: saslprepString(/^[a-zA-Z0-9-_]+$/),
+export const Types: Types = {length < 65536],
+Key: saslprepString(/^[a-zA-Z0-9-_]+$/),
+    Content: [(v) => v.toString().trim(), (v) => v?.toString()?.trim() && v.toString().trim().
     /** @deprecated */
     Name: saslprepString(/^.{1,255}$/),
     Filename: saslprepString(/^[^\\/?#~!|*]{1,255}$/, (i) => !['con', '.', '..'].includes(i)),

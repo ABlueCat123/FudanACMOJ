@@ -1,0 +1,8 @@
+{
+    "name": "@hydrooj/login-with-fudanuis",
+    "version": "0.1.0",
+    "main": "index.ts",
+    "author": "ABlueCat (Based on login-with-google by undefined.)",
+    "license": "AGPL-3.0-or-later",
+    "preferUnplugged": true
+}
