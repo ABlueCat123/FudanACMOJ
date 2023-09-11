@@ -332,6 +332,11 @@ class UserLostPassHandler extends Handler {
         if (!system.get('smtp.user')) throw new SystemError('Cannot send mail');
         const udoc = await user.getByEmail('system', mail);
         if (!udoc) throw new UserNotFoundError(mail);
+        await Promise.all([
+            this.limitRate('send_mail', 3600, 30, false),
+            this.limitRate(`user_lostpass_${mail}`, 60, 5, false),
+            oplog.log(this, 'user.lostpass', {}),
+        ]);
         const [tid] = await token.add(
             token.TYPE_LOSTPASS,
             system.get('session.unsaved_expire_seconds'),
@@ -466,6 +471,7 @@ class OauthCallbackHandler extends Handler {
             if (r.email) {
                 const udoc = await user.getByEmail('system', r.email);
                 if (udoc) {
+                    await oauth.set(r._id, udoc._id);
                     await user.setById(udoc._id, { loginat: new Date(), loginip: this.request.ip });
                     this.session.uid = udoc._id;
                     this.session.scope = PERM.PERM_ALL.toString();
@@ -498,7 +504,7 @@ class OauthCallbackHandler extends Handler {
                     username,
                     redirect: this.domain.registerRedirect,
                     set,
-                    oauth: [args.type, r.email],
+                    oauth: [args.type, r._id],
                 },
             );
             this.response.redirect = this.url('user_register_with_code', { code: t });

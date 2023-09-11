@@ -73,32 +73,39 @@ ScheduleModel.Worker.addHandler('contest', async (doc) => {
 
 export class ContestListHandler extends Handler {
     @param('rule', Types.Range(contest.RULES), true)
+    @param('group', Types.Name, true)
     @param('page', Types.PositiveInt, true)
-    async get(domainId: string, rule = '', page = 1) {
+    async get(domainId: string, rule = '', group = '', page = 1) {
         if (rule && contest.RULES[rule].hidden) throw new BadRequestError();
+        const groups = (await user.listGroup(domainId, this.user.hasPerm(PERM.PERM_VIEW_HIDDEN_CONTEST) ? undefined : this.user._id))
+            .map((i) => i.name);
+        if (group && !groups.includes(group)) throw new NotAssignedError(group);
         const rules = Object.keys(contest.RULES).filter((i) => !contest.RULES[i].hidden);
         const q = {
-            ...this.user.hasPerm(PERM.PERM_VIEW_HIDDEN_CONTEST)
+            ...this.user.hasPerm(PERM.PERM_VIEW_HIDDEN_CONTEST) && !group
                 ? {}
                 : {
                     $or: [
                         { maintainer: this.user._id },
                         { owner: this.user._id },
-                        { assign: { $in: this.user.group } },
+                        { assign: { $in: groups } },
                         { assign: { $size: 0 } },
                     ],
                 },
             ...rule ? { rule } : { rule: { $in: rules } },
+            ...group ? { assign: { $in: [group] } } : {},
         };
-        const cursor = contest.getMulti(domainId, q);
-        const qs = rule ? `rule=${rule}` : '';
+        const cursor = contest.getMulti(domainId, q).sort({ endAt: -1, beginAt: -1, _id: -1 });
+        let qs = rule ? `rule=${rule}` : '';
+        if (group) qs += qs ? `&group=${group}` : `group=${group}`;
         const [tdocs, tpcount] = await paginate<Tdoc>(cursor, page, system.get('pagination.contest'));
         const tids = [];
         for (const tdoc of tdocs) tids.push(tdoc.docId);
         const tsdict = await contest.getListStatus(domainId, this.user._id, tids);
+        const groupsFilter = groups.filter((i) => !Number.isSafeInteger(+i));
         this.response.template = 'contest_main.html';
         this.response.body = {
-            page, tpcount, qs, rule, tdocs, tsdict,
+            page, tpcount, qs, rule, tdocs, tsdict, groups: groupsFilter, group,
         };
     }
 }
@@ -313,6 +320,7 @@ export class ContestScoreboardHandler extends ContestDetailBaseHandler {
     @param('realtime', Types.Boolean)
     async get(domainId: string, tid: ObjectId, ext = '', realtime) {
         if (!contest.canShowScoreboard.call(this, this.tdoc, true)) throw new ContestScoreboardHiddenError(tid);
+        if (contest.isNotStarted(this.tdoc)) throw new ContestNotLiveError(domainId, tid);
         if (realtime && !this.user.own(this.tdoc)) {
             this.checkPerm(PERM.PERM_VIEW_CONTEST_HIDDEN_SCOREBOARD);
         }
@@ -569,7 +577,7 @@ export class ContestCodeHandler extends Handler {
                 if (!id) return;
                 zip.addFile(
                     `${rnames[rdoc._id.toHexString()]}.${filename || 'txt'}`,
-                    await streamToBuffer(storage.get(id)),
+                    await streamToBuffer(await storage.get(`submission/${id}`)),
                 );
             } else if (rdoc.code) {
                 zip.addFile(`${rnames[rdoc._id.toHexString()]}.${rdoc.lang}`, Buffer.from(rdoc.code));
@@ -659,7 +667,9 @@ export class ContestFileDownloadHandler extends ContestDetailBaseHandler {
 export class ContestUserHandler extends ContestManagementBaseHandler {
     @param('tid', Types.ObjectId)
     async get(domainId: string, tid: ObjectId) {
-        const tsdocs = await contest.getMultiStatus(domainId, { docId: tid }).project({ uid: 1, attend: 1, startAt: 1 }).toArray();
+        const tsdocs = await contest.getMultiStatus(domainId, { docId: tid }).project({
+            uid: 1, attend: 1, startAt: 1, unrank: 1,
+        }).toArray();
         tsdocs.forEach((i) => {
             i.endAt = (this.tdoc.duration && i.startAt) ? moment(i.startAt).add(this.tdoc.duration, 'hours').toDate() : null;
         });

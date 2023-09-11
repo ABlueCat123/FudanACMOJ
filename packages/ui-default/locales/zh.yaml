@@ -483,7 +483,9 @@ Last Update At: 最后活动时间
 LaTeX Expressions: LaTeX 表达式
 Learn More: 了解更多
 Leave blank to use numeric pid.: 留空来使用数字题号。
+Leave empty for default: 留空以使用默认
 Ledo: 乐多
+Legacy mode: 兼容模式
 Light: 亮色
 Limit user to finish contest within N hours: 限制用户在N小时内完成比赛
 Limitations: 限制
@@ -555,6 +557,7 @@ New: 创建
 No {0} at current.: 当前没有{0}。
 No comments so far...: 目前还没有评论...
 No discussion yet...: 目前没有讨论…
+No group available: 没有可用小组
 No Permission to Attend Contest: 您没有权限参加比赛
 No Permission to Claim Homework: 您没有权限认领作业
 No Permission to Create a Discussion: 您没有权限创建讨论
@@ -636,6 +639,7 @@ Please select at least one role to perform this operation.: 请选择至少一�
 Please select at least one user to perform this operation.: 请选择至少一个用户来进行操作。
 Please wait until contest host unfreeze the scoreboard.: 请等待比赛主办方解除封榜。
 Preference Settings: 偏好设置
+preferredPrefix_hint: 此选项用于重排题号。例如，若题目包中所给的题号分别是 P1001, P1002, P1003，而此选项填写了 T，则导入后三道题的题号分别为 T1001, T1002 和 T1003。
 Preparing Upload...: 准备上传...
 Pretest Data: 自测数据
 Pretest Your Code: 使用自定义数据测试
@@ -644,6 +648,7 @@ Pretest?: 自测?
 Privacy: 隐私
 Privilege: 权限
 Problem {1} not found.: 题目 {1} 不存在。
+Problem Category: 标签
 Problem Data: 题目数据
 Problem ID cannot be a pure number. Leave blank if you want to use numberic id.: 题目ID不能为纯数字。 若要自动分配数字ID请将此处留空。
 Problem ID List: 题目 ID 列表
@@ -765,7 +770,9 @@ Section: 章节
 Security: 安全
 Select a node to create discussion.: 选择一个节点来发表讨论。
 Select a role: 选择一个角色
+Select Category: 选择标签
 Select User: 选择用户
+Selected categories: 已选标签
 Selected files have been deleted.: 所选文件已被删除。
 Selected problems have been deleted.: 所选题目已被删除。
 Selected roles have been deleted.: 所选角色已删除。
@@ -812,6 +819,7 @@ Sorry, there are no users in this domain.: 对不起，此域中没有用户。
 Sorry: 对不起
 Sort by: 排序
 Source type: 来源类型
+Standard mode: 标准模式
 Star Topic: 收藏讨论
 Star: 收藏
 Starred Users: 关注用户
@@ -1000,6 +1008,7 @@ With this feature, you can copy problems that you can view from a domain to some
 Write Your Comment: 发表您的评论
 Write Your Solution: 发表您的题解
 Year: 年
+You are currently in legacy mode. Some additional features will be unavailable. We strongly recommend switching to standard mode on a modern browser.: 您当前处于兼容模式。某些功能在此模式下不可用。我们强烈建议在现代浏览器上切换为标准模式以获得更好的体验。
 You are not allowed to join the domain. The link is either invalid or expired.: 您无法加入该域，链接无效或已过期。
 You can also upload your avatar to Gravatar and it will be automatically updated here.: 你也可以将头像上传到 <a href="https://gravatar.com/">Gravatar</a>，本站的头像将自动更新。
 You can create your own training plans and share them with others.: 您可以创建您自己的训练计划并且与他人分享。

@@ -266,6 +266,11 @@ class UserModel {
         if ($unset && Object.keys($unset).length) op.$unset = $unset;
         if ($push && Object.keys($push).length) op.$push = $push;
         if (op.$set?.loginip) op.$addToSet = { ip: op.$set.loginip };
+        const keys = new Set(Object.values(op).flatMap((i) => Object.keys(i)));
+        if (keys.has('mailLower') || keys.has('unameLower')) {
+            const udoc = await coll.findOne({ _id: uid });
+            deleteUserCache(udoc);
+        }
         const res = await coll.findOneAndUpdate({ _id: uid }, op, { returnDocument: 'after' });
         deleteUserCache(res.value);
         return res;
@@ -395,7 +400,9 @@ class UserModel {
         const $regex = `^${escapeRegExp(prefix.toLowerCase())}`;
         const udocs = await coll.find({ unameLower: { $regex } })
             .limit(limit).project({ _id: 1 }).toArray();
-        return await Promise.all(udocs.map(({ _id }) => UserModel.getById(domainId, _id)));
+        const dudocs = await domain.getMultiUserInDomain(domainId, { displayName: { $regex } }).limit(limit).project({ uid: 1 }).toArray();
+        const uids = uniq([...udocs.map(({ _id }) => _id), ...dudocs.map(({ uid }) => uid)]);
+        return await Promise.all(uids.map((_id) => UserModel.getById(domainId, _id)));
     }
 
     @ArgMethod
